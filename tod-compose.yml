@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  tomcat:
+    depends_on:
+    - oracle
+    links:
+    - oracle:dockerOracle
+    image: tomcat:9.0.8-jre8
+    volumes:
+    - ./target/:/usr/local/tomcat/webapps/
+    networks:
+    - backend
+    ports:
+    - "8080:8080"
+    restart: always
+  oracle:
+    image: alexeiled/docker-oracle-xe-11g
+    networks:
+    - backend
+    ports:
+    - "1521:1521"
+    - "8081:8080"
+    restart: always
+    environment:
+      ORACLE_ALLOW_REMOTE: "true"
+networks:
+  backend:
+    driver: bridge
