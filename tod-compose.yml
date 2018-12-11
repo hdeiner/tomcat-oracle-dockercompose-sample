@@ -7,6 +7,7 @@ services:
     links:
     - oracle:dockerOracle
     image: tomcat:9.0.8-jre8
+    container_name: tomcat
     volumes:
     - ./target/:/usr/local/tomcat/webapps/
     networks:
@@ -16,6 +17,7 @@ services:
     restart: always
   oracle:
     image: alexeiled/docker-oracle-xe-11g
+    container_name: oracle
     networks:
     - backend
     ports:

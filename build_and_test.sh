@@ -9,14 +9,14 @@ sed -i -r 's/^url\=.*$/url=jdbc:oracle:thin:@dockerOracle:1521\/xe/g' oracleConf
 echo "Bring up Docker Compose"
 sudo -S <<< "password" docker-compose -f tod-compose.yml -p tod up -d
 
-echo Pause 60 seconds to allow Oracle to start up
-sleep 60
-
-#echo "curl http://localhost:8080/passwordAPI/passwordDB"
-#curl http://localhost:8080/passwordAPI/passwordDB
-
-#echo "curl http://localhost:8080/passwordAPI/passwordRules/abcd"
-#curl http://localhost:8080/passwordAPI/passwordRules/abcd
+echo "Waiting for Oracle to start"
+fifo=/tmp/tmpfifo.$$
+mkfifo "${fifo}" || exit 1
+sudo -S <<< "password" docker logs oracle --follow >${fifo} &
+dockerpid=$! 
+grep -m 1 "Oracle started successfully!" "${fifo}"
+sudo -S <<< "password" kill -9 "${dockerpid}" 
+rm "${fifo}"
 
 echo "Create database schema and load sample data"
 liquibase --changeLogFile=src/main/db/changelog.xml update
@@ -33,7 +33,7 @@ fi
 rm temp
 
 echo "Run integration tests"
-mvn failsafe:integration-test
+mvn verify failsafe:integration-test
 
 echo "Bring down Docker Compose"
 sudo -S <<< "password" docker-compose -f tod-compose.yml -p tod down
