@@ -17,8 +17,7 @@ public class PasswordDB {
         JSONObject resultSet = new JSONObject();
 
         try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream inputStream = classLoader.getResourceAsStream("oracleConfig.properties");
+            InputStream inputStream = new FileInputStream("/usr/local/tomcat/webapps/passwordAPI_properties/oracleConfig.properties");
             Properties properties = new Properties();
             properties.load(inputStream);
             String url = properties.getProperty("url");

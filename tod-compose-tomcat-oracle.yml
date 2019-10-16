@@ -6,17 +6,18 @@ services:
     - oracle
     links:
     - oracle:dockerOracle
-    image: tomcat:9.0.8-jre8
+#    image: tomcat:9.0.8-jre8
+    image: howarddeiner/tod-tomcat
     container_name: tomcat
     volumes:
-    - ./deployment/:/usr/local/tomcat/webapps/
+    - ./deployment/:/usr/local/tomcat/webapps/passwordAPI_properties/
     networks:
     - backend
     ports:
     - "8080:8080"
     restart: always
   oracle:
-    image: howarddeiner/oracle-11g-ee
+    image: howarddeiner/tod-oracle
     container_name: oracle
     networks:
     - backend
